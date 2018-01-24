@@ -19,6 +19,14 @@ public class Developer {
         this.salary = salary;
     }
 
+    public Developer(long developerId, String name, int age, String sex, int salary) {
+        this.developerId = developerId;
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+        this.salary = salary;
+    }
+
     @Override
     public String toString() {
         return "Developer{" +
