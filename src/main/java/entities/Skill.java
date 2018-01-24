@@ -6,9 +6,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Skill {
-    long skillId;
-    String skillName;
-    String level;
+    private long skillId;
+    private String skillName;
+    private String level;
 
     public Skill(long skillId, String skillName, String level) {
         this.skillId = skillId;
