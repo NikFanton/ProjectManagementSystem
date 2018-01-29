@@ -129,5 +129,7 @@ crashlytics-build.properties
 fabric.properties
 
 .idea
-JdbcTutorial.iml
+
 *.iml
+/src/main/resources/config/config.properties
+/2-ConnectJDBC.iml
