@@ -2,5 +2,5 @@ package dao;
 
 import entities.Skill;
 
-public interface SkillDao extends DAOBase<Skill, Long> {
+public interface SkillDAO extends DAOBase<Skill, Long> {
 }

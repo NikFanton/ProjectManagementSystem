@@ -1,4 +1,6 @@
 package dao;
 
-public interface DeveloperDAO {
+import entities.Developer;
+
+public interface DeveloperDAO extends DAOBase<Developer, Long> {
 }

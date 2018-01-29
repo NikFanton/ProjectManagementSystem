@@ -1,62 +1,84 @@
 package dao.impl;
 
-import dao.DAOBase;
+import dao.DeveloperToSkillDAO;
 import entities.DeveloperToSkill;
+import utils.ConnectionUtil;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JDBCDeveloperToSkillDao implements DAOBase<DeveloperToSkill, DeveloperToSkill> {
-
-    private Connection connection;
-    private Statement statement;
-    private PreparedStatement createDevToSkillStatement;
-    private PreparedStatement deleteDevToSkillStatement;
-    private PreparedStatement updateDevToSkillStatement;
-    private PreparedStatement selectDevToSkillStatement;
-
-    public JDBCDeveloperToSkillDao(Connection connection) {
-        this.connection = connection;
-        try {
-            statement = connection.createStatement();
-            createDevToSkillStatement = connection.prepareStatement("INSERT INTO developers_skills (developer_id, skill_id) VALUES (?, ?);");
-            deleteDevToSkillStatement = connection.prepareStatement("DELETE FROM developers_skills WHERE developer_id = ? AND skill_id = ?");
-            updateDevToSkillStatement = connection.prepareStatement("UPDATE developers_skills SET developer_id = ?, skill_id = ? WHERE developer_id = ? AND skill_id = ?");
-            selectDevToSkillStatement = connection.prepareStatement("SELECT * FROM developers_skills WHERE developer_id = ? AND skill_id = ?");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+public class DeveloperToSkillDAOImpl implements DeveloperToSkillDAO {
+    @Override
     public void add(DeveloperToSkill developerToSkill) {
+        PreparedStatement preparedStatement = null;
+        String sql = "INSERT INTO developers_skills (developer_id, skill_id) VALUES (?, ?);";
         try {
-            createDevToSkillStatement.setLong(1, developerToSkill.getDeveloperId());
-            createDevToSkillStatement.setLong(2, developerToSkill.getSkillId());
-            createDevToSkillStatement.executeUpdate();
+            preparedStatement = ConnectionUtil.getConnection().prepareStatement(sql);
+            preparedStatement.setLong(1, developerToSkill.getDeveloperId());
+            preparedStatement.setLong(2, developerToSkill.getSkillId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement.getConnection() != null) {
+                    preparedStatement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    @Override
     public DeveloperToSkill getById(DeveloperToSkill id) {
+        PreparedStatement preparedStatement = null;
+        String sql = "SELECT * FROM developers_skills WHERE developer_id = ? AND skill_id = ?";
         try {
-            selectDevToSkillStatement.setLong(1, id.getDeveloperId());
-            selectDevToSkillStatement.setLong(2, id.getSkillId());
-            ResultSet rs = selectDevToSkillStatement.executeQuery();
+            preparedStatement = ConnectionUtil.getConnection().prepareStatement(sql);
+            preparedStatement.setLong(1, id.getDeveloperId());
+            preparedStatement.setLong(2, id.getSkillId());
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.first()) {
                 return new DeveloperToSkill(rs.getLong("developer_id"), rs.getLong("skill_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement.getConnection() != null) {
+                    preparedStatement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
+    @Override
     public List<DeveloperToSkill> getAll() {
         List<DeveloperToSkill> result = new ArrayList<DeveloperToSkill>();
+        Statement statement = null;
         ResultSet rs = null;
         try {
+            statement = ConnectionUtil.getConnection().createStatement();
             rs = statement.executeQuery("SELECT * FROM developers_skills");
             while (rs.next()) {
                 long developerId = rs.getLong("developer_id");
@@ -68,7 +90,17 @@ public class JDBCDeveloperToSkillDao implements DAOBase<DeveloperToSkill, Develo
             e.printStackTrace();
         } finally {
             try {
+                statement.getConnection().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
                 rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -76,16 +108,40 @@ public class JDBCDeveloperToSkillDao implements DAOBase<DeveloperToSkill, Develo
         return result;
     }
 
+    @Override
     public void update(DeveloperToSkill developerToSkill) {
     }
 
+    @Override
     public void delete(DeveloperToSkill id) {
+        PreparedStatement preparedStatement = null;
+        String sql = "DELETE FROM developers_skills WHERE developer_id = ? AND skill_id = ?";
         try {
-            deleteDevToSkillStatement.setLong(1, id.getDeveloperId());
-            deleteDevToSkillStatement.setLong(2, id.getSkillId());
-            deleteDevToSkillStatement.executeUpdate();
+            preparedStatement = ConnectionUtil.getConnection().prepareStatement(sql);
+            preparedStatement.setLong(1, id.getDeveloperId());
+            preparedStatement.setLong(2, id.getSkillId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement.getConnection() != null) {
+                    preparedStatement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public static void main(String[] args) {
+        DeveloperToSkillDAOImpl developerToSkillDAO = new DeveloperToSkillDAOImpl();
+        developerToSkillDAO.getAll().forEach(devToSkill -> System.out.println(devToSkill));
     }
 }

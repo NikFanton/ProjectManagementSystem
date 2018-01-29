@@ -12,6 +12,9 @@ public class Developer {
     private String sex;
     private int salary;
 
+    public Developer() {
+    }
+
     public Developer(String name, int age, String sex, int salary) {
         this.name = name;
         this.age = age;
