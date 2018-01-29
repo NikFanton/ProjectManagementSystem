@@ -16,15 +16,15 @@ public class Project {
     public Project() {
     }
 
-    public Project(long id, String projectName, long idCustomer, long idCompany, int cost) {
-        this.id = id;
+    public Project(String projectName, long idCustomer, long idCompany, int cost) {
         this.projectName = projectName;
         this.idCustomer = idCustomer;
         this.idCompany = idCompany;
         this.cost = cost;
     }
 
-    public Project(String projectName, long idCustomer, long idCompany, int cost) {
+    public Project(long id, String projectName, long idCustomer, long idCompany, int cost) {
+        this.id = id;
         this.projectName = projectName;
         this.idCustomer = idCustomer;
         this.idCompany = idCompany;

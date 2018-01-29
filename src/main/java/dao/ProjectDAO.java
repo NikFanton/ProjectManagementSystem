@@ -1,4 +1,6 @@
 package dao;
 
-public interface ProjectDAO {
+import entities.Project;
+
+public interface ProjectDAO extends DAOBase<Project, Long> {
 }

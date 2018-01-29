@@ -1,4 +1,6 @@
 package dao;
 
-public interface CompanyDAO {
+import entities.Company;
+
+public interface CompanyDAO extends DAOBase<Company, Long> {
 }

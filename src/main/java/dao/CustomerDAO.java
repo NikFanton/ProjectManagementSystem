@@ -1,4 +1,6 @@
 package dao;
 
-public class CustomerDAO {
+import entities.Customer;
+
+public interface CustomerDAO extends DAOBase<Customer, Long>{
 }
