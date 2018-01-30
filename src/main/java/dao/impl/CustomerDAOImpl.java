@@ -145,6 +145,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         Statement statement = null;
         try {
             statement = ConnectionUtil.getConnection().createStatement();
+            statement.executeUpdate("UPDATE projects SET id_customer = NULL WHERE id_customer = " + id);
             statement.executeUpdate("DELETE FROM customers WHERE id = " + id);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -164,6 +165,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     public static void main(String[] args) {
         CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+        customerDAO.delete(14L);
         customerDAO.getAll().forEach(cust-> System.out.println(cust));
     }
 }

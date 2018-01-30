@@ -127,6 +127,7 @@ public class DeveloperDAOImpl implements DeveloperDAO {
         try {
             statement = ConnectionUtil.getConnection().createStatement();
             statement.executeUpdate("DELETE FROM developers_skills WHERE developer_id = " + id);
+            statement.executeUpdate("DELETE FROM developers_projects WHERE id_developer = " + id);
             statement.executeUpdate("DELETE FROM developers WHERE developer_id = " + id);
         } catch (SQLException e) {
             e.printStackTrace();

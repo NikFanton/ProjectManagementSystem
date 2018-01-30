@@ -1,5 +1,10 @@
 package entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Company {
     private long companyId;
     private String companyName;

@@ -1,47 +1,65 @@
-package starter;
-
-import dao.impl.DeveloperDAOImpl;
-import dao.impl.DeveloperToSkillDAOImpl;
-import dao.impl.SkillDAOImpl;
 import entities.Developer;
-import entities.DeveloperToSkill;
 import entities.Project;
-import entities.Skill;
-import lombok.Getter;
 import utils.ConnectionUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppRunner {
-
-
-    public int costOfProject(long projectId) {
+public class InfoFinder {
+    public static int costOfProject(long projectId) {
+        Statement statement = null;
+        ResultSet rs = null;
+        String sql = "SELECT sum(developers.salary) FROM developers\n" +
+                "INNER JOIN developers_projects ON developers.developer_id = developers_projects.id_developer\n" +
+                "INNER JOIN projects ON developers_projects.id_project = projects.id\n" +
+                "WHERE projects.id = " + projectId + "\n" +
+                "GROUP BY (id_project);";
         try {
-            ResultSet rs = ConnectionUtil.getConnection().createStatement().executeQuery("select sum(developers.salary) from developers\n" +
-                    "inner join developers_projects on developers.developer_id = developers_projects.id_developer\n" +
-                    "inner join projects on developers_projects.id_project = projects.id\n" +
-                    "where projects.id = '" + projectId + "'\n" +
-                    "group by (id_project);");
+            statement = ConnectionUtil.getConnection().createStatement();
+            rs = statement.executeQuery(sql);
             if (rs.first()) {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.getConnection().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return 0;
     }
 
-    public List<Developer> listOfDevelopersOfProject(long projectId) {
+    public static List<Developer> listOfDevelopersOfProject(long projectId) {
         List<Developer> result = new ArrayList<Developer>();
+        Statement statement = null;
         ResultSet rs = null;
+        String sql = "SELECT * FROM developers\n" +
+                    "INNER JOIN developers_projects ON developers.developer_id = developers_projects.id_developer\n" +
+                    "INNER JOIN projects ON developers_projects.id_project = projects.id\n" +
+                    "WHERE projects.id = " + projectId + ";";
         try {
-            rs = ConnectionUtil.getConnection().createStatement().executeQuery("select * from developers\n" +
-                    "        inner join developers_projects on developers.developer_id = developers_projects.id_developer\n" +
-                    "        inner join projects on developers_projects.id_project = projects.id\n" +
-                    "        where projects.id = '" + projectId + "';");
+            statement = ConnectionUtil.getConnection().createStatement();
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 long id = rs.getLong("developer_id");
                 String name = rs.getString("name");
@@ -54,18 +72,41 @@ public class AppRunner {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.getConnection().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public List<Developer> listOfJavaDevelopers() {
+    public static List<Developer> listOfJavaDevelopers() {
         List<Developer> result = new ArrayList<Developer>();
+        Statement statement = null;
         ResultSet rs = null;
+        String sql = "SELECT * FROM developers\n" +
+                "  JOIN developers_skills ON developers.developer_id = developers_skills.developer_id\n" +
+                "  JOIN skills ON developers_skills.skill_id = skills.skill_id\n" +
+                "WHERE skill_name LIKE 'java';";
         try {
-            rs = ConnectionUtil.getConnection().createStatement().executeQuery("SELECT * FROM developers\n" +
-                    "  JOIN developers_skills ON developers.developer_id = developers_skills.developer_id\n" +
-                    "  JOIN skills ON developers_skills.skill_id = skills.skill_id\n" +
-                    "WHERE skill_name LIKE 'java';");
+            statement = ConnectionUtil.getConnection().createStatement();
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 long id = rs.getLong("developer_id");
                 String name = rs.getString("name");
@@ -78,19 +119,44 @@ public class AppRunner {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public List<Developer> listOfMiddleDevelopers() {
+    public static List<Developer> listOfMiddleDevelopers() {
         List<Developer> result = new ArrayList<Developer>();
+        Statement statement = null;
         ResultSet rs = null;
+        String sql = "SELECT * FROM developers\n" +
+                "  JOIN developers_skills ON developers.developer_id = developers_skills.developer_id\n" +
+                "  JOIN skills ON developers_skills.skill_id = skills.skill_id\n" +
+                "WHERE level LIKE 'middle'" +
+                "GROUP BY (developers.developer_id);";
         try {
-            rs = ConnectionUtil.getConnection().createStatement().executeQuery("SELECT * FROM developers\n" +
-                    "  JOIN developers_skills ON developers.developer_id = developers_skills.developer_id\n" +
-                    "  JOIN skills ON developers_skills.skill_id = skills.skill_id\n" +
-                    "WHERE level LIKE 'middle'" +
-                    "GROUP BY (developers.developer_id);");
+            statement = ConnectionUtil.getConnection().createStatement();
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 long id = rs.getLong("developer_id");
                 String name = rs.getString("name");
@@ -103,18 +169,43 @@ public class AppRunner {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public List<Project> listOfProjectsInfo() {
+    public static List<Project> listOfProjectsInfo() {
         List<Project> result = new ArrayList<Project>();
+        Statement statement = null;
         ResultSet rs = null;
+        String sql = "SELECT projects.project_name, count(developer_id) FROM projects\n" +
+                "INNER JOIN developers_projects ON projects.id = developers_projects.id_project\n" +
+                "INNER JOIN developers ON developers.developer_id = developers_projects.id_project\n" +
+                "GROUP BY (projects.id);";
         try {
-            rs = ConnectionUtil.getConnection().createStatement().executeQuery("select projects.project_name, count(developer_id) from projects\n" +
-                    "inner join developers_projects on projects.id = developers_projects.id_project\n" +
-                    "inner join developers on developers.developer_id = developers_projects.id_project\n" +
-                    "group by(projects.id);");
+            statement = ConnectionUtil.getConnection().createStatement();
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 String projectName = rs.getString("project_name");
                 int countOfDev = rs.getInt("count(developer_id)");
@@ -126,11 +217,46 @@ public class AppRunner {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.getConnection().close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     public static void main(String[] args) {
-        AppRunner appRunner = new AppRunner();
+        System.out.println(InfoFinder.costOfProject(7));
+        System.out.println("---------");
+        InfoFinder.listOfDevelopersOfProject(7L).forEach(System.out::println);
+        System.out.println("---------");
+        InfoFinder.listOfJavaDevelopers().forEach(System.out::println);
+        System.out.println("---------");
+        InfoFinder.listOfMiddleDevelopers().forEach(System.out::println);
+        System.out.println("---------");
+        for (Project project : InfoFinder.listOfProjectsInfo()) {
+            System.out.println("Project{" +
+                    "projectName='" + project.getProjectName() + '\'' +
+                    ", countOfDevelopers=" + project.getCountOfDevelopers() +
+                    '}');
+        }
     }
 }
